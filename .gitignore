@@ -5,3 +5,6 @@
 # python environments
 .venv
 venv
+
+# cache
+__pycache__
