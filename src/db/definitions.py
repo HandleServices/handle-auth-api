@@ -1,6 +1,12 @@
+from typing import ClassVar
+
+from pydantic import BaseModel
 from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm.decl_api import DeclarativeAttributeIntercept
 
+from src.common.pydantic import to_pydantic
 from src.utils import get_env_var
 
 DATABASE_URL = URL.create(
@@ -14,3 +20,13 @@ DATABASE_URL = URL.create(
 
 engine = create_async_engine(DATABASE_URL)
 async_session = async_sessionmaker(engine)
+
+
+class BaseMeta(DeclarativeAttributeIntercept):
+    @property
+    def pydantic(cls):
+        return to_pydantic(cls)
+
+
+class Base(DeclarativeBase, metaclass=BaseMeta):
+    pydantic: ClassVar[BaseModel]
