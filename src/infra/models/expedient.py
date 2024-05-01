@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy import ForeignKey, Enum, TIME
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.common.enums import WeekDay
+from src.infra.enums import WeekDay
 from src.db.definitions import Base
 
 

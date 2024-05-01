@@ -3,7 +3,7 @@ from uuid import UUID as _UUID
 from sqlalchemy import ForeignKey, UUID, Enum, text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.common.enums import *
+from src.infra.enums import *
 from src.db.definitions import Base
 
 

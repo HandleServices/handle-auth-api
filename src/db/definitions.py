@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm.decl_api import DeclarativeAttributeIntercept
 
-from src.common.pydantic import to_pydantic
+from src.infra.pydantic import to_pydantic
 from src.utils import get_env_var
 
 DATABASE_URL = URL.create(
