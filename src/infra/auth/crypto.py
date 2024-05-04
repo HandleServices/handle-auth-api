@@ -5,13 +5,11 @@ from uuid import uuid4
 from gloe import transformer, partial_transformer
 from gloe.utils import forward_incoming, forget
 
-from src.infra.auth.definitions import PASSWORD_ENCRYPTION_ALGORYTHM
-
 type PasswordInfo = tuple[str, str]
 
 
 @partial_transformer
-def generate_salt(generator: Callable[[], str]) -> str:
+def generate_salt(data: None, generator: Callable[[], str]) -> str:
     return generator()
 
 
