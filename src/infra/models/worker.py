@@ -1,6 +1,6 @@
 from uuid import UUID as _UUID
 
-from sqlalchemy import ForeignKey, UUID, Enum, text
+from sqlalchemy import ForeignKey, UUID, Enum, text, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.infra.enums import *
@@ -15,13 +15,13 @@ class Worker(Base):
         primary_key=True,
         server_default=text('gen_random_uuid()')
     )
-    first_name: Mapped[str]
-    last_name: Mapped[str]
+    first_name: Mapped[str] = mapped_column(String(50))
+    last_name: Mapped[str] = mapped_column(String(50))
     gender: Mapped[Gender] = mapped_column(Enum(Gender, name='genders'))
-    business_name: Mapped[str]
+    business_name: Mapped[str] = mapped_column(String(50))
     job_id: Mapped[int] = mapped_column(ForeignKey('jobs.id'))
-    email: Mapped[str] = mapped_column(unique=True)
-    phone: Mapped[str] = mapped_column(unique=True)
-    doc_num: Mapped[str] = mapped_column(unique=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True)
+    phone: Mapped[str] = mapped_column(String(15), unique=True)
+    doc_num: Mapped[str] = mapped_column(String(14), unique=True)
     doc_type: Mapped[DocType] = mapped_column(Enum(DocType, name='doc_types'))
     profile_pic_url: Mapped[str]

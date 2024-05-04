@@ -29,14 +29,14 @@ ALTER TABLE
 CREATE TABLE IF NOT EXISTS workers
 (
     id              uuid DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
-    first_name      VARCHAR                        NOT NULL,
-    last_name       VARCHAR                        NOT NULL,
+    first_name      VARCHAR(50)                    NOT NULL,
+    last_name       VARCHAR(50)                    NOT NULL,
     gender          genders                        NOT NULL,
-    business_name   VARCHAR                        NOT NULL,
+    business_name   VARCHAR(50)                    NOT NULL,
     job_id          INTEGER                        NOT NULL REFERENCES jobs,
-    email           VARCHAR                        NOT NULL UNIQUE,
-    phone           VARCHAR                        NOT NULL UNIQUE,
-    doc_num         VARCHAR                        NOT NULL UNIQUE,
+    email           VARCHAR(255)                   NOT NULL UNIQUE,
+    phone           CHAR(15)                       NOT NULL UNIQUE,
+    doc_num         VARCHAR(14)                    NOT NULL UNIQUE,
     doc_type        doc_types                      NOT NULL,
     profile_pic_url VARCHAR                        NOT NULL
 );
@@ -58,10 +58,11 @@ ALTER TABLE
 
 CREATE TABLE IF NOT EXISTS workers_login
 (
-    worker_id     uuid    NOT NULL
+    worker_id     uuid     NOT NULL
         PRIMARY KEY
         REFERENCES public.workers,
-    hash_password varchar NOT NULL
+    hash_password CHAR(64) NOT NULL,
+    salt          uuid     NOT NULL
 );
 
 ALTER TABLE workers_login
