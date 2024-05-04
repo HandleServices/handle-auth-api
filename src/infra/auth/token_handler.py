@@ -5,7 +5,7 @@ from uuid import UUID
 import jwt
 
 from src.infra.auth.auth_response import AuthResponse
-from src.infra.auth.definitions import ALGORITHM, EXPIRY_TIME, SECRET
+from src.infra.auth.definitions import JWT_ALGORYTHM, EXPIRY_TIME, SECRET
 
 type json = dict[str, any]
 
@@ -16,14 +16,14 @@ def sign(uuid: UUID, email: str) -> AuthResponse:
         'user_email': email,
         'exp': time() + EXPIRY_TIME
     }
-    token = jwt.encode(payload=payload, key=SECRET, algorithm=ALGORITHM)
+    token = jwt.encode(payload=payload, key=SECRET, algorithm=JWT_ALGORYTHM)
     return AuthResponse(access_token=token)
 
 
 def decode(token: str) -> Optional[json]:
     try:
         decode_token: json = jwt.decode(
-            jwt=token, key=SECRET, algorithms=[ALGORITHM]
+            jwt=token, key=SECRET, algorithms=[JWT_ALGORYTHM]
         )
         if decode_token['exp'] >= time():
             return decode_token
