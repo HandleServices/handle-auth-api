@@ -14,5 +14,5 @@ class WorkerLogin(Base):
         ForeignKey('workers.id'),
         primary_key=True
     )
-    hash_password: Mapped[str] = mapped_column(CHAR(length=64))
+    hashed_password: Mapped[str] = mapped_column(CHAR(length=64))
     salt: Mapped[_UUID] = mapped_column(UUID(as_uuid=True))

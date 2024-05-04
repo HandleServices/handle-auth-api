@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS workers_login
     worker_id     uuid     NOT NULL
         PRIMARY KEY
         REFERENCES public.workers,
-    hash_password CHAR(64) NOT NULL,
+    hashed_password CHAR(64) NOT NULL,
     salt          uuid     NOT NULL
 );
 
