@@ -1,5 +1,3 @@
-from dotenv import load_dotenv
-
 from src.utils import get_env_var
 
 SECRET = get_env_var('JWT_SECRET')
