@@ -1,6 +1,6 @@
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from src.infra.auth import methods as auth_methods
+from src.infra.auth import token_handler
 
 
 class Bearer(HTTPBearer):
@@ -15,5 +15,5 @@ class Bearer(HTTPBearer):
 
     @staticmethod
     def verify_token(token: str):
-        payload = auth_methods.decode(token)
+        payload = token_handler.decode(token)
         return payload is not None
