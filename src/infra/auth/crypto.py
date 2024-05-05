@@ -54,7 +54,7 @@ def encrypt_password(password: str) -> PasswordInfo:
     return encryption_pipeline(password)
 
 
-def salt_then_encrypt_password(password: str, salt: str) -> PasswordInfo:
+def salt_then_encrypt_password(password: str, salt: str) -> str:
     """
     Encrypts a given password with the given salt using SHA-256.
 
@@ -68,12 +68,12 @@ def salt_then_encrypt_password(password: str, salt: str) -> PasswordInfo:
     :param salt: the salt that the password will be encrypted with
     :type salt: str
 
-    :return: A tuple containing the encrypted password concatenated with the salt and the salt itself
-    :rtype: tuple[str, str]
+    :return: A string of the encrypted password concatenated with the salt
+    :rtype: str
     """
 
     encrypt_password_sha256 = encrypt_password_by_algorythm('SHA256')
 
     encryption_pipeline = salt_password >> encrypt_password_sha256
 
-    return encryption_pipeline((salt, password))
+    return encryption_pipeline((salt, password))[0]
