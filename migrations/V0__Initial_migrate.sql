@@ -35,10 +35,10 @@ CREATE TABLE IF NOT EXISTS workers
     business_name   VARCHAR(50)                    NOT NULL,
     job_id          INTEGER                        NOT NULL REFERENCES jobs,
     email           VARCHAR(255)                   NOT NULL UNIQUE,
-    phone           CHAR(15)                       NOT NULL UNIQUE,
+    phone           VARCHAR(15)                    NOT NULL UNIQUE,
     doc_num         VARCHAR(14)                    NOT NULL UNIQUE,
     doc_type        doc_types                      NOT NULL,
-    profile_pic_url VARCHAR                        NOT NULL
+    profile_pic_url VARCHAR
 );
 ALTER TABLE
     workers

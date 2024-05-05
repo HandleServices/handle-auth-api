@@ -24,4 +24,4 @@ class Worker(Base):
     phone: Mapped[str] = mapped_column(String(15), unique=True)
     doc_num: Mapped[str] = mapped_column(String(14), unique=True)
     doc_type: Mapped[DocType] = mapped_column(Enum(DocType, name='doc_types'))
-    profile_pic_url: Mapped[str]
+    profile_pic_url: Mapped[str | None]
