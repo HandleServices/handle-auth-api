@@ -10,7 +10,7 @@ from src.infra.auth.definitions import JWT_ALGORYTHM, EXPIRY_TIME, SECRET
 type json = dict[str, any]
 
 
-def sign(uuid: UUID, email: str) -> AuthResponse:
+async def sign(uuid: UUID, email: str) -> AuthResponse:
     payload = {
         'user_id': str(uuid),
         'user_email': email,
@@ -20,7 +20,7 @@ def sign(uuid: UUID, email: str) -> AuthResponse:
     return AuthResponse(access_token=token)
 
 
-def decode(token: str) -> Optional[json]:
+async def decode(token: str) -> Optional[json]:
     try:
         decode_token: json = jwt.decode(
             jwt=token, key=SECRET, algorithms=[JWT_ALGORYTHM]
