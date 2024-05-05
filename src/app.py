@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 
+from src.use_cases.login.controller import login_router
+
 app = FastAPI()
-
-
-@app.get('/')
-async def get_hello_world():
-    return 'hello world'
+app.include_router(login_router, prefix='/login')
