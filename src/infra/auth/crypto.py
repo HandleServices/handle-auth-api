@@ -1,16 +1,15 @@
 import hashlib
-from typing import Callable
 from uuid import uuid4, UUID
 
 from gloe import transformer, partial_transformer
-from gloe.utils import forward_incoming, forget
+from gloe.utils import forward_incoming
 
 type PasswordInfo = tuple[str, str]
 
 
-@partial_transformer
-def generate_salt(data: None, generator: Callable[[], str]) -> str:
-    return generator()
+@transformer
+def generate_salt_uuid4(data: None) -> str:
+    return str(uuid4())
 
 
 @transformer
@@ -44,10 +43,8 @@ def encrypt_password(password: str) -> tuple[str, UUID]:
 
     encrypt_password_sha256 = encrypt_password_by_algorythm('SHA256')
 
-    generate_salt_uuid4 = generate_salt(lambda: str(uuid4()))
-
     encryption_pipeline = (
-            forward_incoming(forget >> generate_salt_uuid4) >>
+            forward_incoming(generate_salt_uuid4) >>
             salt_password >>
             encrypt_password_sha256
     )
