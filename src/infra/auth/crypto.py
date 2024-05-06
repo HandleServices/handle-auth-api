@@ -1,6 +1,6 @@
 import hashlib
 from typing import Callable
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 from gloe import transformer, partial_transformer
 from gloe.utils import forward_incoming, forget
@@ -26,7 +26,7 @@ def encrypt_password_by_algorythm(credentials: PasswordInfo, algorythm: str) -> 
     return h.hexdigest(), salt
 
 
-def encrypt_password(password: str) -> PasswordInfo:
+def encrypt_password(password: str) -> tuple[str, UUID]:
     """
     Encrypts a given password with a randomly generated salt using SHA-256.
 
@@ -39,7 +39,7 @@ def encrypt_password(password: str) -> PasswordInfo:
     :type password: str
 
     :return: A tuple containing the encrypted password concatenated with the salt and the salt itself
-    :rtype: tuple[str, str]
+    :rtype: tuple[str, UUID]
     """
 
     encrypt_password_sha256 = encrypt_password_by_algorythm('SHA256')
@@ -51,7 +51,10 @@ def encrypt_password(password: str) -> PasswordInfo:
             salt_password >>
             encrypt_password_sha256
     )
-    return encryption_pipeline(password)
+
+    encrypted_password, salt = encryption_pipeline(password)
+
+    return encrypted_password, UUID(hex=salt)
 
 
 def salt_then_encrypt_password(password: str, salt: str) -> str:
