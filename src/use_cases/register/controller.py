@@ -1,4 +1,4 @@
-from typing import Annotated, Callable
+from typing import Annotated, Callable, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -38,19 +38,31 @@ async def validate_credentials(
         schema: ValidateCredentialsSchema,
         session: Annotated[AsyncSession, Depends(get_db_session)]
 ) -> list[ValidateFieldSchema]:
+    if all((not schema.email, not schema.doc_num, not schema.phone)):
+        raise HTTPException(400, 'At least one parameter must be provided for availability check')
+
     availability = await check_worker_credentials_availability(
         email=schema.email,
         doc_num=schema.doc_num,
         phone=schema.phone,
         session=session
     )
+
     fields_availability = zip(['email', 'doc_num', 'phone'], availability)
 
-    create_validate_field_schema: Callable[[tuple[str, bool]], ValidateFieldSchema] = (
+    create_validate_field_schema: Callable[[tuple[str, Optional[bool]]], ValidateFieldSchema] = (
         lambda field_info: ValidateFieldSchema(
             field=field_info[0],
             available=field_info[1]
         )
     )
 
-    return list(map(create_validate_field_schema, fields_availability))
+    is_not_empty_field: Callable[[tuple[str, Optional[bool]]], bool] = (
+        lambda field_info: field_info[1] is not None
+    )
+
+    requested_fields = filter(is_not_empty_field, fields_availability)
+
+    response = map(create_validate_field_schema, requested_fields)
+
+    return list(response)

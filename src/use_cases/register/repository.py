@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,26 +31,27 @@ async def ensure_unique_worker_credentials(email: str, doc: str, phone: str, ses
 
 
 async def check_worker_credentials_availability(
-        email: str,
-        doc_num: str,
-        phone: str,
+        email: Optional[str],
+        doc_num: Optional[str],
+        phone: Optional[str],
         session: AsyncSession
-) -> tuple[bool, bool, bool]:
+) -> tuple[Optional[bool], Optional[bool], Optional[bool]]:
     """
-    Checks the availability of email, document number (doc), and phone number in the database.
+    Asynchronously checks the availability of email, document number, and phone number in the database.
 
-    :param email: The email address to check for availability.
-    :param doc_num: The document number to check for availability.
-    :param phone: The phone number to check for availability.
+    :param email: Optional. The email address to check for availability.
+    :param doc_num: Optional. The document number to check for availability.
+    :param phone: Optional. The phone number to check for availability.
     :param session: An AsyncSession instance to execute asynchronous database queries.
 
-    :return: A tuple containing Boolean values indicating the availability of email, doc, and phone respectively.
-             Each element in the tuple represents whether the corresponding data is available (True) or not (False).
+    :return: A tuple containing optional Boolean values indicating the availability of email, doc_num,
+    and phone respectively. Each element in the tuple represents whether the corresponding data is available
+    (True), not available (False), or is not provided (None).
     """
 
-    email_available = not await verify_existence(session, Worker, Worker.email, email)
-    doc_available = not await verify_existence(session, Worker, Worker.doc_num, doc_num)
-    phone_available = not await verify_existence(session, Worker, Worker.phone, phone)
+    email_available = None if not email else not await verify_existence(session, Worker, Worker.email, email)
+    doc_available = None if not doc_num else not await verify_existence(session, Worker, Worker.doc_num, doc_num)
+    phone_available = None if not phone else not await verify_existence(session, Worker, Worker.phone, phone)
     return email_available, doc_available, phone_available
 
 
