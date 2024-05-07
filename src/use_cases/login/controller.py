@@ -9,7 +9,7 @@ from src.infra.exceptions import NotFoundError
 from src.use_cases.login import repository
 from src.use_cases.login.models import LoginSchema
 
-login_router = APIRouter()
+login_router = APIRouter(tags=['Login'])
 
 
 @login_router.post('')

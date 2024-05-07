@@ -21,7 +21,7 @@ async def check_credentials(email: str, password: str, session: AsyncSession) ->
     query = (
         select(WorkerLogin)
         .join(Worker, Worker.id == WorkerLogin.worker_id)
-        .filter(Worker.email.__eq__(email))
+        .where(Worker.email.__eq__(email))
     )
     login = await session.scalar(query)
     if login is None:

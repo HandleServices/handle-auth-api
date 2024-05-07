@@ -9,9 +9,7 @@ from src.infra.models import Worker, WorkerLogin, Expedient
 from src.use_cases.register.models import RegisterSchema, ExpedientSchema
 
 
-# todo create functions that validates every field of worker
-
-async def check_availability(email: str, doc: str, phone: str, session: AsyncSession):
+async def verify_availability(email: str, doc: str, phone: str, session: AsyncSession):
     if await verify_existence(session, Worker, Worker.email, email):
         raise AlreadyExistsError('An account with the provided email already exists')
     if await verify_existence(session, Worker, Worker.doc_num, doc):
@@ -21,7 +19,7 @@ async def check_availability(email: str, doc: str, phone: str, session: AsyncSes
 
 
 async def create_worker(data: RegisterSchema, session: AsyncSession) -> UUID:
-    await check_availability(data.email, data.doc_num, data.phone, session)
+    await verify_availability(data.email, data.doc_num, data.phone, session)
     worker = Worker(
         first_name=data.first_name,
         last_name=data.last_name,
@@ -57,3 +55,27 @@ async def create_worker_login(worker_id: UUID, password: str, session: AsyncSess
         salt=salt
     )
     session.add(worker_login)
+
+
+async def check_availability(
+        email: str,
+        doc_num: str,
+        phone: str,
+        session: AsyncSession
+) -> tuple[bool, bool, bool]:
+    """
+    Asynchronously checks the availability of email, document number (doc), and phone number in the database.
+    
+    :param email: The email address to check for availability.
+    :param doc_num: The document number to check for availability.
+    :param phone: The phone number to check for availability.
+    :param session: An AsyncSession instance to execute asynchronous database queries.
+
+    :return: A tuple containing Boolean values indicating the availability of email, doc, and phone respectively.
+             Each element in the tuple represents whether the corresponding data is available (True) or not (False).
+    """
+
+    email_available = not await verify_existence(session, Worker, Worker.email, email)
+    doc_available = not await verify_existence(session, Worker, Worker.doc_num, doc_num)
+    phone_available = not await verify_existence(session, Worker, Worker.phone, phone)
+    return email_available, doc_available, phone_available
