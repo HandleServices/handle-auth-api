@@ -25,7 +25,7 @@ if __name__ == '__main__':
             gender=Gender.MALE,
             business_name='chaveiro arruda',
             job_id=generic_job.id,
-            email='email@email.com',
+            email='carlos@email.com',
             phone='11988776655',
             doc_num='11122233344',
             doc_type=DocType.CPF,
