@@ -7,7 +7,7 @@ load_dotenv()
 from src.infra.auth.crypto import salt_then_encrypt_password
 from src.infra.enums import *
 from src.infra.models import Job, Category, Worker, WorkerLogin, Expedient
-from src.scripts.common import LocalSession
+from scripts.common import LocalSession
 
 if __name__ == '__main__':
     with LocalSession() as session:
