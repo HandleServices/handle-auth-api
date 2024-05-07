@@ -9,7 +9,18 @@ from src.infra.models import Worker, WorkerLogin, Expedient
 from src.use_cases.register.models import RegisterSchema, ExpedientSchema
 
 
-async def verify_availability(email: str, doc: str, phone: str, session: AsyncSession):
+async def ensure_unique_worker_credentials(email: str, doc: str, phone: str, session: AsyncSession):
+    """
+    Checks the availability of email, document number (doc), and phone number in the workers table
+    to ensure uniqueness.
+    If any of the parameters already exists raises an AlreadyExistsError
+
+    :param email: The email address to ensure uniqueness.
+    :param doc: The document number to ensure uniqueness
+    :param phone The phone number to ensure uniqueness
+    :param session: An AsyncSession instance to execute asynchronous database queries.
+    :raises: AlreadyExistsError if any of the provided email, doc and phone exists in workers table
+    """
     if await verify_existence(session, Worker, Worker.email, email):
         raise AlreadyExistsError('An account with the provided email already exists')
     if await verify_existence(session, Worker, Worker.doc_num, doc):
@@ -18,8 +29,32 @@ async def verify_availability(email: str, doc: str, phone: str, session: AsyncSe
         raise AlreadyExistsError('An account with the provided phone already exists')
 
 
+async def check_worker_credentials_availability(
+        email: str,
+        doc_num: str,
+        phone: str,
+        session: AsyncSession
+) -> tuple[bool, bool, bool]:
+    """
+    Checks the availability of email, document number (doc), and phone number in the database.
+
+    :param email: The email address to check for availability.
+    :param doc_num: The document number to check for availability.
+    :param phone: The phone number to check for availability.
+    :param session: An AsyncSession instance to execute asynchronous database queries.
+
+    :return: A tuple containing Boolean values indicating the availability of email, doc, and phone respectively.
+             Each element in the tuple represents whether the corresponding data is available (True) or not (False).
+    """
+
+    email_available = not await verify_existence(session, Worker, Worker.email, email)
+    doc_available = not await verify_existence(session, Worker, Worker.doc_num, doc_num)
+    phone_available = not await verify_existence(session, Worker, Worker.phone, phone)
+    return email_available, doc_available, phone_available
+
+
 async def create_worker(data: RegisterSchema, session: AsyncSession) -> UUID:
-    await verify_availability(data.email, data.doc_num, data.phone, session)
+    await ensure_unique_worker_credentials(data.email, data.doc_num, data.phone, session)
     worker = Worker(
         first_name=data.first_name,
         last_name=data.last_name,
@@ -55,27 +90,3 @@ async def create_worker_login(worker_id: UUID, password: str, session: AsyncSess
         salt=salt
     )
     session.add(worker_login)
-
-
-async def check_availability(
-        email: str,
-        doc_num: str,
-        phone: str,
-        session: AsyncSession
-) -> tuple[bool, bool, bool]:
-    """
-    Asynchronously checks the availability of email, document number (doc), and phone number in the database.
-    
-    :param email: The email address to check for availability.
-    :param doc_num: The document number to check for availability.
-    :param phone: The phone number to check for availability.
-    :param session: An AsyncSession instance to execute asynchronous database queries.
-
-    :return: A tuple containing Boolean values indicating the availability of email, doc, and phone respectively.
-             Each element in the tuple represents whether the corresponding data is available (True) or not (False).
-    """
-
-    email_available = not await verify_existence(session, Worker, Worker.email, email)
-    doc_available = not await verify_existence(session, Worker, Worker.doc_num, doc_num)
-    phone_available = not await verify_existence(session, Worker, Worker.phone, phone)
-    return email_available, doc_available, phone_available

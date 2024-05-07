@@ -9,7 +9,7 @@ from src.infra.exceptions import AlreadyExistsError
 from src.use_cases.register import repository
 from src.use_cases.register.models import RegisterSchema
 from src.use_cases.register.models.validate_credentials import ValidateCredentialsSchema, ValidateFieldSchema
-from src.use_cases.register.repository import create_expedient, check_availability
+from src.use_cases.register.repository import create_expedient, check_worker_credentials_availability
 
 register_router = APIRouter(tags=['Register'])
 
@@ -38,7 +38,7 @@ async def validate_credentials(
         schema: ValidateCredentialsSchema,
         session: Annotated[AsyncSession, Depends(get_db_session)]
 ) -> list[ValidateFieldSchema]:
-    availability = await check_availability(
+    availability = await check_worker_credentials_availability(
         email=schema.email,
         doc_num=schema.doc_num,
         phone=schema.phone,
